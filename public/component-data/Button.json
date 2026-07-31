@@ -1,0 +1,77 @@
+{
+  "name": "button",
+  "canonicalName": "Button",
+  "page": "     ↳ Botões",
+  "width": 558,
+  "height": 664,
+  "variants": [
+    {
+      "name": "button · tertiary",
+      "props": {
+        "variant": "button",
+        "emphasis": "tertiary",
+        "showIcon": false
+      }
+    },
+    {
+      "name": "button · tertiary · show icon",
+      "props": {
+        "variant": "button",
+        "emphasis": "tertiary",
+        "showIcon": true
+      }
+    },
+    {
+      "name": "button · secundary",
+      "props": {
+        "variant": "button",
+        "emphasis": "secundary",
+        "showIcon": false
+      }
+    },
+    {
+      "name": "button · secundary · show icon",
+      "props": {
+        "variant": "button",
+        "emphasis": "secundary",
+        "showIcon": true
+      }
+    },
+    {
+      "name": "button · primary",
+      "props": {
+        "variant": "button",
+        "emphasis": "primary",
+        "showIcon": false
+      }
+    },
+    {
+      "name": "button · primary · show icon",
+      "props": {
+        "variant": "button",
+        "emphasis": "primary",
+        "showIcon": true
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Border Radius/border-radius-xs",
+      "value": 4
+    },
+    {
+      "name": "Spaces/space-x",
+      "value": 12
+    },
+    {
+      "name": "Spaces/space-m",
+      "value": 16
+    },
+    {
+      "name": "Spaces/space-xs",
+      "value": 8
+    }
+  ],
+  "anatomy": {},
+  "docs": {}
+}

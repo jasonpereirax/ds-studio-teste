@@ -1,0 +1,269 @@
+{
+  "name": "Chip",
+  "canonicalName": "Chip",
+  "page": "Chips ✔-",
+  "width": 127,
+  "height": 506,
+  "variants": [
+    {
+      "name": "Off · Off · Off · No",
+      "props": {
+        "icon": false,
+        "filter": false,
+        "closable": false,
+        "selected": false
+      }
+    },
+    {
+      "name": "On",
+      "props": {
+        "icon": false,
+        "filter": false,
+        "closable": false,
+        "selected": true
+      }
+    },
+    {
+      "name": "On",
+      "props": {
+        "icon": true,
+        "filter": false,
+        "closable": false,
+        "selected": false
+      }
+    },
+    {
+      "name": "On · On",
+      "props": {
+        "icon": true,
+        "filter": false,
+        "closable": false,
+        "selected": true
+      }
+    },
+    {
+      "name": "On",
+      "props": {
+        "icon": false,
+        "filter": false,
+        "closable": true,
+        "selected": false
+      }
+    },
+    {
+      "name": "On · On",
+      "props": {
+        "icon": false,
+        "filter": false,
+        "closable": true,
+        "selected": true
+      }
+    },
+    {
+      "name": "On · On",
+      "props": {
+        "icon": true,
+        "filter": false,
+        "closable": true,
+        "selected": false
+      }
+    },
+    {
+      "name": "On · On · On",
+      "props": {
+        "icon": true,
+        "filter": false,
+        "closable": true,
+        "selected": true
+      }
+    },
+    {
+      "name": "On · On · Yes",
+      "props": {
+        "icon": true,
+        "filter": true,
+        "closable": true,
+        "selected": false
+      }
+    },
+    {
+      "name": "On · On · On · Yes",
+      "props": {
+        "icon": true,
+        "filter": true,
+        "closable": true,
+        "selected": true
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Gap/m",
+      "value": 16
+    },
+    {
+      "name": "Padding/m",
+      "value": 16
+    },
+    {
+      "name": "Corner-Radius/xxs",
+      "value": 4
+    },
+    {
+      "name": "Stroke-Width/s",
+      "value": 1
+    },
+    {
+      "name": "Background/background",
+      "value": {
+        "a": 1,
+        "b": 1,
+        "g": 1,
+        "r": 1
+      }
+    },
+    {
+      "name": "Borders/borderKenosLibreria",
+      "value": {
+        "a": 1,
+        "b": 1,
+        "g": 0.3803921639919281,
+        "r": 0.48235294222831726
+      }
+    },
+    {
+      "name": "Padding/none",
+      "value": 0
+    },
+    {
+      "name": "Padding/s",
+      "value": 12
+    },
+    {
+      "name": "Padding/xs",
+      "value": 8
+    },
+    {
+      "name": "Padding/xxs",
+      "value": 4
+    },
+    {
+      "name": "Corner-Radius/l",
+      "value": 24
+    },
+    {
+      "name": "Opacity/100",
+      "value": 100
+    },
+    {
+      "name": "Background/backgroundContainer",
+      "value": {
+        "a": 1,
+        "b": 1,
+        "g": 1,
+        "r": 1
+      }
+    },
+    {
+      "name": "Borders/border",
+      "value": {
+        "a": 1,
+        "b": 0.8666666746139526,
+        "g": 0.8666666746139526,
+        "r": 0.8666666746139526
+      }
+    },
+    {
+      "name": "Texts/Global/textPrimary",
+      "value": {
+        "a": 1,
+        "b": 0.2078431397676468,
+        "g": 0.19607843458652496,
+        "r": 0.1921568661928177
+      }
+    },
+    {
+      "name": "Text/preset-2",
+      "value": 14
+    },
+    {
+      "name": "Weight/medium",
+      "value": "medium"
+    },
+    {
+      "name": "Family/Roboto",
+      "value": "Roboto"
+    },
+    {
+      "name": "Line-height/preset-2",
+      "value": 20
+    },
+    {
+      "name": "Global/brandLow",
+      "value": {
+        "a": 1,
+        "b": 0.9921568632125854,
+        "g": 0.9607843160629272,
+        "r": 0.9019607901573181
+      }
+    },
+    {
+      "name": "Global/brandHigh",
+      "value": {
+        "a": 1,
+        "b": 0.8666666746139526,
+        "g": 0.5568627715110779,
+        "r": 0
+      }
+    },
+    {
+      "name": "Gap/xxs",
+      "value": 4
+    },
+    {
+      "name": "Corner-Radius/none",
+      "value": 0
+    },
+    {
+      "name": "Component/16",
+      "value": 16
+    },
+    {
+      "name": "Global/neutralMedium",
+      "value": {
+        "a": 1,
+        "b": 0.43529412150382996,
+        "g": 0.42352941632270813,
+        "r": 0.41960784792900085
+      }
+    },
+    {
+      "name": "Gap/xs",
+      "value": 8
+    },
+    {
+      "name": "Gap/s",
+      "value": 12
+    },
+    {
+      "name": "Global/neutralHigh",
+      "value": {
+        "a": 1,
+        "b": 0.2078431397676468,
+        "g": 0.19607843458652496,
+        "r": 0.1921568661928177
+      }
+    }
+  ],
+  "anatomy": {
+    "gap": 16,
+    "align": "MIN",
+    "direction": "column",
+    "crossAlign": "MIN",
+    "paddingTop": 16,
+    "paddingLeft": 16,
+    "paddingRight": 16,
+    "paddingBottom": 16
+  },
+  "docs": {}
+}

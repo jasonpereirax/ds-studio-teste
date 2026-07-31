@@ -1,0 +1,57 @@
+{
+  "name": "Calendar card",
+  "canonicalName": "CalendarCard",
+  "page": "     ↳ Calendário",
+  "width": 776,
+  "height": 2443,
+  "variants": [
+    {
+      "name": "Default",
+      "props": {}
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Spaces/space-x",
+      "value": 12
+    },
+    {
+      "name": "Spaces/space-xxl",
+      "value": 48
+    },
+    {
+      "name": "Spaces/space-l",
+      "value": 24
+    },
+    {
+      "name": "Spaces/space-xxs",
+      "value": 4
+    },
+    {
+      "name": "Border Radius/border-radius-xs",
+      "value": 4
+    },
+    {
+      "name": "Spaces/space-xs",
+      "value": 8
+    },
+    {
+      "name": "Spaces/space-m",
+      "value": 16
+    },
+    {
+      "name": "Spaces/space-xl",
+      "value": 32
+    },
+    {
+      "name": "Border Radius/border-radius-full",
+      "value": 10000
+    },
+    {
+      "name": "Border Radius/border-radius-x",
+      "value": 8
+    }
+  ],
+  "anatomy": {},
+  "docs": {}
+}

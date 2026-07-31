@@ -1,0 +1,43 @@
+/* Auto-gerado pelo DS Studio — derivado dos tokens dos componentes.
+ * Não edite manualmente; sobrescrito a cada publicação. */
+
+:root {
+  --gap-m: 16px;
+  --padding-m: 16px;
+  --corner-radius-xxs: 4px;
+  --stroke-width-s: 1px;
+  --background-background: #ffffff;
+  --borders-borderkenoslibreria: #7b61ff;
+  --padding-none: 0;
+  --padding-s: 12px;
+  --padding-xs: 8px;
+  --padding-xxs: 4px;
+  --corner-radius-l: 24px;
+  --opacity-100: 100;
+  --background-backgroundcontainer: #ffffff;
+  --borders-border: #dddddd;
+  --texts-global-textprimary: #313235;
+  --text-preset-2: 14px;
+  --weight-medium: "medium";
+  --family-roboto: "Roboto";
+  --line-height-preset-2: 20;
+  --global-brandlow: #e6f5fd;
+  --global-brandhigh: #008edd;
+  --gap-xxs: 4px;
+  --corner-radius-none: 0;
+  --component-16: 16px;
+  --global-neutralmedium: #6b6c6f;
+  --gap-xs: 8px;
+  --gap-s: 12px;
+  --global-neutralhigh: #313235;
+  --spaces-space-xs: 8px;
+  --border-radius-border-radius-xs: 4px;
+  --spaces-space-xxs: 4px;
+  --border-radius-border-radius-x: 8px;
+  --spaces-space-x: 12px;
+  --spaces-space-m: 16px;
+  --spaces-space-xxl: 48px;
+  --spaces-space-l: 24px;
+  --spaces-space-xl: 32px;
+  --border-radius-border-radius-full: 10000px;
+}

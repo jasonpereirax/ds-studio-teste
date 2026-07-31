@@ -1,0 +1,45 @@
+{
+  "name": "Accordion",
+  "canonicalName": "Accordion",
+  "page": "     ↳ Accordion",
+  "width": 721,
+  "height": 307,
+  "variants": [
+    {
+      "name": "Closed",
+      "props": {
+        "state": "closed"
+      }
+    },
+    {
+      "name": "Open",
+      "props": {
+        "state": "open"
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Spaces/space-xs",
+      "value": 8
+    },
+    {
+      "name": "Border Radius/border-radius-x",
+      "value": 8
+    },
+    {
+      "name": "Spaces/space-x",
+      "value": 12
+    },
+    {
+      "name": "Border Radius/border-radius-xs",
+      "value": 4
+    },
+    {
+      "name": "Spaces/space-l",
+      "value": 24
+    }
+  ],
+  "anatomy": {},
+  "docs": {}
+}

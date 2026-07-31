@@ -1,0 +1,24 @@
+{
+  "name": "week day",
+  "canonicalName": "WeekDay",
+  "page": "     ↳ Agenda",
+  "width": 727,
+  "height": 83,
+  "variants": [
+    {
+      "name": "Desktop",
+      "props": {
+        "device": "desktop"
+      }
+    },
+    {
+      "name": "Mobile",
+      "props": {
+        "device": "mobile"
+      }
+    }
+  ],
+  "tokens": [],
+  "anatomy": {},
+  "docs": {}
+}

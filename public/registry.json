@@ -1,0 +1,86 @@
+{
+  "$schema": "ds-studio/registry@1",
+  "project": "jasonpereirax/ds-studio-teste",
+  "generatedAt": "2026-07-31T02:28:40.172Z",
+  "components": [
+    {
+      "name": "Chip",
+      "displayName": "Chip",
+      "category": "Chips ✔-",
+      "version": "1.0.0",
+      "variants": [
+        "Off · Off · Off · No",
+        "On",
+        "On",
+        "On · On",
+        "On",
+        "On · On",
+        "On · On",
+        "On · On · On",
+        "On · On · Yes",
+        "On · On · On · Yes"
+      ],
+      "url": "/c/chip"
+    },
+    {
+      "name": "Input",
+      "displayName": "Input",
+      "category": "     ↳ Inputs",
+      "version": "1.0.0",
+      "variants": [
+        "Simple",
+        "Text area",
+        "Simple · On",
+        "Simple · On"
+      ],
+      "url": "/c/input"
+    },
+    {
+      "name": "WeekDay",
+      "displayName": "week day",
+      "category": "     ↳ Agenda",
+      "version": "1.0.0",
+      "variants": [
+        "Desktop",
+        "Mobile"
+      ],
+      "url": "/c/weekday"
+    },
+    {
+      "name": "Button",
+      "displayName": "button",
+      "category": "     ↳ Botões",
+      "version": "1.0.0",
+      "variants": [
+        "button · tertiary",
+        "button · tertiary · show icon",
+        "button · secundary",
+        "button · secundary · show icon",
+        "button · primary",
+        "button · primary · show icon"
+      ],
+      "url": "/c/button"
+    },
+    {
+      "name": "CalendarCard",
+      "displayName": "Calendar card",
+      "category": "     ↳ Calendário",
+      "version": "1.0.0",
+      "variants": [
+        "Default"
+      ],
+      "url": "/c/calendarcard"
+    },
+    {
+      "name": "Accordion",
+      "displayName": "Accordion",
+      "category": "     ↳ Accordion",
+      "version": "1.0.0",
+      "variants": [
+        "Closed",
+        "Open"
+      ],
+      "url": "/c/accordion"
+    }
+  ]
+}

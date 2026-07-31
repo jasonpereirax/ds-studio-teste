@@ -1,0 +1,55 @@
+{
+  "name": "Input",
+  "canonicalName": "Input",
+  "page": "     ↳ Inputs",
+  "width": 1547,
+  "height": 1936,
+  "variants": [
+    {
+      "name": "Simple",
+      "props": {
+        "variant": "simple"
+      }
+    },
+    {
+      "name": "Text area",
+      "props": {
+        "variant": "textArea"
+      }
+    },
+    {
+      "name": "Simple · On",
+      "props": {
+        "variant": "simple",
+        "obrigatory": true
+      }
+    },
+    {
+      "name": "Simple · On",
+      "props": {
+        "variant": "simple",
+        "infoButton": true
+      }
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Spaces/space-xs",
+      "value": 8
+    },
+    {
+      "name": "Border Radius/border-radius-xs",
+      "value": 4
+    },
+    {
+      "name": "Spaces/space-xxs",
+      "value": 4
+    },
+    {
+      "name": "Border Radius/border-radius-x",
+      "value": 8
+    }
+  ],
+  "anatomy": {},
+  "docs": {}
+}
