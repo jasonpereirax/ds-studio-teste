@@ -869,33 +869,6 @@ function OverviewPage({ registry, onOpen, onFoundations, onExport, q, setQ, toke
       {/* top bar */}
       <TopBar title="Overview" actions={onPublish ? <DarkPill onClick={onPublish}><Icon d={ICONS.github || "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"} size={15} />Publicar no GitHub</DarkPill> : undefined} />
 
-      {/* Como usar — só na instância publicada (site white-label do design system) */}
-      {IS_INSTANCE && (
-        <div style={{ ...cardBox, padding: 24, marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.02em" }}>Como usar</div>
-            <span className="dss-mono" style={{ fontSize: 11, color: "var(--ink-subtle)", border: "1px solid var(--hairline)", borderRadius: 999, padding: "6px 12px" }}>{registry.length} componentes · {totalVariants} variantes</span>
-          </div>
-          <div style={{ fontSize: 14, color: "var(--ink-muted)", lineHeight: 1.6, marginBottom: 18, maxWidth: 660 }}>
-            Design system de <b style={{ color: "var(--ink)" }}>{project}</b> — componentes React/TypeScript prontos pra produção. Importe do diretório de componentes e componha na sua aplicação. Abra qualquer componente pra ver variantes, props, tokens e o código-fonte.
-          </div>
-          <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
-            <div>
-              <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>1 · Importar</div>
-              <pre className="dss-mono" style={{ margin: 0, background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 12, padding: "12px 14px", fontSize: 12.5, color: "var(--ink)", overflowX: "auto", lineHeight: 1.5 }}>{`import { ${registry[0]?.name || "Button"} } from "@/components/${registry[0]?.name || "Button"}"`}</pre>
-            </div>
-            <div>
-              <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>2 · Usar no JSX</div>
-              <pre className="dss-mono" style={{ margin: 0, background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 12, padding: "12px 14px", fontSize: 12.5, color: "var(--ink)", overflowX: "auto", lineHeight: 1.5 }}>{`<${registry[0]?.name || "Button"} />`}</pre>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
-            <button className="dss-btn" onClick={onFoundations} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: "var(--ink-muted)", background: "transparent", border: "1px solid var(--hairline-strong)", borderRadius: 999, padding: "8px 15px", cursor: "pointer", fontFamily: "var(--font-sans)" }}><Icon d={ICONS.layers} size={14} />Tokens & Foundations</button>
-            <button className="dss-btn" onClick={onExport} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: "var(--ink-muted)", background: "transparent", border: "1px solid var(--hairline-strong)", borderRadius: 999, padding: "8px 15px", cursor: "pointer", fontFamily: "var(--font-sans)" }}><Icon d={ICONS.download} size={14} />DESIGN.md pra agentes</button>
-          </div>
-        </div>
-      )}
-
       {/* row 1: Sistema (1fr) + Variantes por componente (360px) */}
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 360px", gap: 20 }}>
         {/* Sistema */}
@@ -3388,10 +3361,13 @@ async function publishProject(opts: { token: string; pat: string; owner: string;
 function PublishModal({ project, token, components, onClose }: { project: any; token?: string; components: any[]; onClose: () => void }) {
   const [pat, setPat] = useState(() => { try { return localStorage.getItem(ADMIN_PAT_KEY) || "" } catch { return "" } })
   const [remember, setRemember] = useState(true)
-  const [owner, setOwner] = useState("")
-  const [repo, setRepo] = useState(() => pkgSlug(project?.name || "") || "")
-  const [branch, setBranch] = useState("main")
-  const [vercel, setVercel] = useState("")
+  const CFG_KEY = project?.id ? "dss-publish-cfg:" + project.id : ""
+  const savedCfg: any = (() => { try { return CFG_KEY ? (JSON.parse(localStorage.getItem(CFG_KEY) || "{}") || {}) : {} } catch { return {} } })()
+  const [owner, setOwner] = useState(() => savedCfg.owner || "")
+  const [repo, setRepo] = useState(() => savedCfg.repo || pkgSlug(project?.name || "") || "")
+  const [branch, setBranch] = useState(() => savedCfg.branch || "main")
+  const [vercel, setVercel] = useState(() => savedCfg.vercel || "")
+  const [deployHook, setDeployHook] = useState(() => savedCfg.deployHook || "")
   const [phase, setPhase] = useState<"form" | "running" | "done" | "error">("form")
   const [msg, setMsg] = useState("")
   const [result, setResult] = useState<{ sha: string; url: string; count: number } | null>(null)
@@ -3412,6 +3388,11 @@ function PublishModal({ project, token, components, onClose }: { project: any; t
         onProgress: setMsg,
       })
       setResult(res); setPhase("done")
+      // Persiste a config de publicação DESTE projeto (some com o "digitar tudo de novo").
+      try { if (CFG_KEY) localStorage.setItem(CFG_KEY, JSON.stringify({ owner: owner.trim(), repo: repo.trim(), branch: branch.trim() || "main", vercel: vercel.trim(), deployHook: deployHook.trim() })) } catch { /* ok */ }
+      // Vercel Deploy Hook: garante um build mesmo quando o commit via API não dispara o
+      // webhook do GitHub (a causa do "deploy não atualiza"). Best-effort, no-cors.
+      if (deployHook.trim()) { try { fetch(deployHook.trim(), { method: "POST", mode: "no-cors" }) } catch { /* best-effort */ } }
       const repoFull = owner.trim() + "/" + repo.trim()
       // Grava repo_full_name + vercel_url no projeto (best-effort; não bloqueia a publicação)
       if (project?.id && token) {
@@ -3469,6 +3450,11 @@ function PublishModal({ project, token, components, onClose }: { project: any; t
                 <label style={lbl}>Vercel URL (opcional)</label>
                 <input value={vercel} onChange={e => setVercel(e.target.value)} placeholder={"https://" + (repo.trim() || "meu-design-system") + ".vercel.app"} style={field} />
                 <div style={{ fontSize: 11, color: "var(--ink-subtle)", marginTop: 5, lineHeight: 1.5 }}>Fica salvo no projeto junto do repositório. Se deixar em branco, assumimos <span className="dss-mono">{repo.trim() || "repo"}.vercel.app</span>.</div>
+              </div>
+              <div>
+                <label style={lbl}>Vercel Deploy Hook (opcional)</label>
+                <input value={deployHook} onChange={e => setDeployHook(e.target.value)} placeholder="https://api.vercel.com/v1/integrations/deploy/…" style={field} />
+                <div style={{ fontSize: 11, color: "var(--ink-subtle)", marginTop: 5, lineHeight: 1.5 }}>Vercel → Settings → Git → Deploy Hooks (branch <span className="dss-mono">{branch.trim() || "main"}</span>). Com isso, toda publicação dispara um build — o commit via API às vezes não aciona o webhook do GitHub.</div>
               </div>
               {phase === "error" ? <div style={{ background: "var(--err-soft)", color: "var(--err)", fontSize: 12.5, fontWeight: 600, padding: "10px 12px", borderRadius: 10, lineHeight: 1.5 }}>{error}</div> : null}
               <div style={{ fontSize: 11.5, color: "var(--ink-subtle)", lineHeight: 1.55, background: "var(--surface-2)", padding: "10px 12px", borderRadius: 10 }}>O repo pode estar vazio — a plataforma cria a estrutura completa (Vite + React + Tailwind + componentes). Conecte-o ao Vercel para o deploy automático.</div>
@@ -5798,7 +5784,247 @@ function AppSidebar({ collapsed, onToggleCollapse, scope, children }: { collapse
   )
 }
 
+// ══════════════════ InstanceApp — site publicado (Storybook white-label) ══════════════════
+// Renderizado quando IS_INSTANCE. É OUTRO design e OUTRA função (não o hub bento):
+// um explorador estilo Storybook, com o visual do preview do builder (células em
+// --surface-2, labels mono, cards brancos). Componentes vêm do registry ESTÁTICO
+// (Component real, já empacotado no bundle) — variantes renderizam ao vivo direto.
+class DSVariantBoundary extends React.Component<{ children: React.ReactNode }, { err: boolean }> {
+  constructor(p: { children: React.ReactNode }) { super(p); this.state = { err: false } }
+  static getDerivedStateFromError() { return { err: true } }
+  componentDidCatch() { /* fallback silencioso */ }
+  render() { return this.state.err ? <span style={{ fontSize: 11, color: "var(--ink-subtle)", fontFamily: "var(--font-mono)" }}>erro ao renderizar</span> : this.props.children as any }
+}
+function dsPropsLabel(props: Record<string, unknown>): string {
+  const ks = Object.keys(props || {})
+  if (!ks.length) return "Default"
+  return ks.map(k => k + "=" + String((props as any)[k])).join(" · ")
+}
+// célula de variante — mesmo visual do preview do builder
+function DSPreviewCell({ entry, v }: { entry: RegistryEntry; v: { name: string; props: Record<string, unknown> } }) {
+  const C = entry.Component
+  return (
+    <div style={{ border: "1px solid var(--hairline)", borderRadius: 12, overflow: "hidden", background: "var(--surface)", display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: 22, background: "var(--surface-2)", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 132, overflow: "hidden" }}>
+        <DSVariantBoundary><C {...heroProps(entry, v.props || {})} /></DSVariantBoundary>
+      </div>
+      <div style={{ padding: "10px 13px", borderTop: "1px solid var(--hairline)" }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "var(--ink)" }}>{v.name || "—"}</div>
+        {Object.keys(v.props || {}).length > 0 && <div style={{ fontFamily: "var(--font-mono)", fontSize: 9.5, color: "var(--ink-subtle)", marginTop: 3, lineHeight: 1.4, wordBreak: "break-word" }}>{dsPropsLabel(v.props)}</div>}
+      </div>
+    </div>
+  )
+}
+// eixos de prop derivados das variantes (nome → valores) — pra tabela de props
+function dsPropAxes(entry: RegistryEntry): { name: string; values: string[] }[] {
+  const m: Record<string, Set<string>> = {}
+  for (const v of (entry.variants || [])) for (const [k, val] of Object.entries(v.props || {})) { (m[k] ||= new Set()); if (val != null) m[k].add(String(val)) }
+  return Object.entries(m).map(([name, vs]) => ({ name, values: Array.from(vs) }))
+}
+function DSCodeBlock({ code, lang }: { code: string; lang?: string }) {
+  const [copied, setCopied] = useState(false)
+  const copy = () => { try { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400) } catch {} }
+  return (
+    <div style={{ position: "relative" }}>
+      <button onClick={copy} style={{ position: "absolute", top: 8, right: 8, fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: copied ? "var(--accent-ink)" : "var(--ink-muted)", background: copied ? "var(--accent-soft)" : "var(--surface)", border: "1px solid var(--hairline-strong)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{copied ? "copiado" : "copiar"}</button>
+      <pre className="dss-mono" style={{ margin: 0, background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 12, padding: "14px 16px", fontSize: 12.5, color: "var(--ink)", overflowX: "auto", lineHeight: 1.55, whiteSpace: "pre" }}>{code}</pre>
+    </div>
+  )
+}
+// detalhe de um componente: uso + grid completo de variantes + props + código
+function DSComponentDetail({ entry }: { entry: RegistryEntry }) {
+  const axes = useMemo(() => dsPropAxes(entry), [entry.name])
+  const [showCode, setShowCode] = useState(false)
+  const imp = `import { ${entry.name} } from "@/components/${entry.name}"`
+  return (
+    <div className="dss-fade" style={{ padding: "26px 30px 60px", maxWidth: 1080 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
+        <h1 className="dss-display" style={{ fontSize: 30, fontWeight: 800, margin: 0, letterSpacing: "-0.03em" }}>{entry.displayName}</h1>
+        <span className="dss-mono" style={{ fontSize: 11, background: "var(--surface-2)", color: "var(--ink-muted)", padding: "4px 10px", borderRadius: 999 }}>v{entry.version}</span>
+        <span className="dss-mono" style={{ fontSize: 11, color: "var(--ink-subtle)" }}>{(entry.variants || []).length} variações</span>
+        <span className="dss-mono" style={{ fontSize: 11, color: "var(--ink-subtle)", marginLeft: "auto" }}>{entry.category}</span>
+      </div>
+
+      {/* Uso */}
+      <div style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", padding: 22, marginBottom: 20 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 12 }}>Uso</div>
+        <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+          <DSCodeBlock code={imp} />
+          <DSCodeBlock code={`<${entry.name} />`} />
+        </div>
+      </div>
+
+      {/* Variantes (todas) — visual do preview do builder */}
+      <div style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", overflow: "hidden", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 20px", borderBottom: "1px solid var(--hairline)" }}>
+          <span style={{ fontSize: 14, fontWeight: 700 }}>Variantes</span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, fontWeight: 600, color: "var(--ink-muted)", background: "var(--surface-3)", padding: "2px 8px", borderRadius: 999 }}>{(entry.variants || []).length}</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 16, padding: 18 }}>
+          {(entry.variants && entry.variants.length ? entry.variants : [{ name: "Default", props: {} }]).map((v, i) => <DSPreviewCell key={i} entry={entry} v={v as any} />)}
+        </div>
+      </div>
+
+      {/* Props */}
+      {axes.length > 0 && (
+        <div style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", padding: 22, marginBottom: 20 }}>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 14 }}>Props</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {axes.map(a => (
+              <div key={a.name} style={{ display: "flex", gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, fontWeight: 600, color: "var(--ink)", minWidth: 120 }}>{a.name}</span>
+                <span style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {a.values.map(val => <span key={val} style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--ink-muted)", background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 7, padding: "3px 9px" }}>{val}</span>)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Código */}
+      {entry.source && (
+        <div style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", padding: 22 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: showCode ? 14 : 0 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "var(--ink-subtle)" }}>Código-fonte</div>
+            <button onClick={() => setShowCode(s => !s)} style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600, color: "var(--ink-muted)", background: "transparent", border: "1px solid var(--hairline-strong)", borderRadius: 999, padding: "6px 14px", cursor: "pointer" }}>{showCode ? "Ocultar" : "Mostrar"}</button>
+          </div>
+          {showCode && <DSCodeBlock code={entry.source} />}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function InstanceApp({ registry }: { registry: RegistryEntry[] }) {
+  const [theme, setTheme] = useState<Theme>(() => { try { return (localStorage.getItem("dss-inst-theme") as Theme) || "light" } catch { return "light" } })
+  useEffect(() => { try { localStorage.setItem("dss-inst-theme", theme) } catch {} }, [theme])
+  const [q, setQ] = useState("")
+  const [sel, setSel] = useState<string | null>(null)
+  const projName = REPO_NAME.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+
+  const cats = useMemo(() => {
+    const ql = q.trim().toLowerCase()
+    const out: Record<string, RegistryEntry[]> = {}
+    for (const c of registry) {
+      if (ql && !(c.displayName.toLowerCase().includes(ql) || c.name.toLowerCase().includes(ql) || (c.category || "").toLowerCase().includes(ql))) continue
+      ;(out[c.category || "Components"] ||= []).push(c)
+    }
+    return out
+  }, [registry, q])
+  const catNames = Object.keys(cats).sort()
+  const active = sel ? registry.find(c => c.name === sel) || null : null
+  const totalVariants = registry.reduce((a, c) => a + ((c.variants || []).length || 0), 0)
+  const firstName = registry[0]?.name || "Button"
+
+  return (
+    <ThemeCtx.Provider value={{ theme, toggle: () => setTheme(t => t === "light" ? "dark" : "light") }}>
+      <style>{THEME_CSS}</style>
+      <FontLoader />
+      <div className="dss-root" style={{ display: "flex", minHeight: "100vh", background: "var(--canvas)", fontFamily: "var(--font-sans)", color: "var(--ink)" }}>
+        {/* Sidebar (explorer, estilo Storybook) */}
+        <aside style={{ width: 280, flexShrink: 0, background: "var(--canvas)", borderRight: "1px solid var(--hairline)", position: "sticky", top: 0, height: "100vh", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "20px 22px 14px" }}>
+            <button onClick={() => setSel(null)} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>
+              <span style={{ width: 30, height: 30, borderRadius: 9, background: "linear-gradient(145deg,#6f6f72,#2b2b2e)", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "var(--shadow-sm)" }}>
+                <span style={{ width: 13, height: 13, background: "#fff", clipPath: "polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)" }} />
+              </span>
+              <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
+                <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.02em" }}>{projName}</span>
+                <span className="dss-mono" style={{ fontSize: 9.5, color: "var(--ink-subtle)", letterSpacing: ".04em" }}>DESIGN SYSTEM</span>
+              </span>
+            </button>
+          </div>
+          <div style={{ padding: "0 16px 12px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: 999, padding: "8px 14px", boxShadow: "var(--shadow-sm)" }}>
+              <Icon d="M11 19a8 8 0 100-16 8 8 0 000 16z|M21 21l-4.3-4.3" size={14} stroke={1.8} />
+              <input value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar componente…" style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontSize: 13, fontFamily: "var(--font-sans)", color: "var(--ink)" }} />
+            </div>
+          </div>
+          <div className="dss-scroll" style={{ flex: 1, overflowY: "auto", padding: "0 12px 16px" }}>
+            {catNames.length === 0 && <div style={{ padding: "12px 14px", fontSize: 12.5, color: "var(--ink-subtle)" }}>Nada encontrado.</div>}
+            {catNames.map(cat => (
+              <div key={cat} style={{ marginBottom: 10 }}>
+                <div className="dss-mono" style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--ink-subtle)", padding: "8px 14px 4px" }}>{cat}</div>
+                {cats[cat].map(c => {
+                  const on = sel === c.name
+                  return (
+                    <button key={c.name} onClick={() => setSel(c.name)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", textAlign: "left", background: on ? "var(--surface)" : "transparent", boxShadow: on ? "var(--shadow-sm)" : "none", border: "none", borderRadius: 10, padding: "8px 14px", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: on ? 600 : 500, color: on ? "var(--ink)" : "var(--ink-muted)" }}>
+                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.displayName}</span>
+                      <span className="dss-mono" style={{ fontSize: 10, color: "var(--ink-subtle)", flexShrink: 0, marginLeft: 8 }}>{(c.variants || []).length}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
+          </div>
+          {/* rodapé: selo discreto + tema */}
+          <div style={{ padding: "12px 18px", borderTop: "1px solid var(--hairline)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontFamily: "var(--font-mono)", fontSize: 9.5, color: "var(--ink-subtle)", letterSpacing: ".03em" }}>
+              <span style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.5, width: 12, height: 12 }}>
+                <span style={{ background: "var(--ink-subtle)", borderRadius: 1 }} /><span style={{ background: "var(--accent)", borderRadius: 1 }} /><span style={{ background: "var(--ink-subtle)", borderRadius: 1 }} /><span style={{ background: "var(--ink-subtle)", borderRadius: 1 }} />
+              </span>
+              Generated with DS Studio
+            </span>
+            <button title="Alternar tema" onClick={() => setTheme(t => t === "light" ? "dark" : "light")} style={{ width: 30, height: 30, borderRadius: 999, border: "1px solid var(--hairline-strong)", background: "transparent", color: "var(--ink-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><Icon d={theme === "light" ? ICONS.moon : ICONS.sun} size={14} /></button>
+          </div>
+        </aside>
+
+        {/* Main */}
+        <main style={{ flex: 1, minWidth: 0, overflowY: "auto", height: "100vh" }}>
+          {active ? <DSComponentDetail entry={active} /> : (
+            <div className="dss-fade" style={{ padding: "26px 30px 60px", maxWidth: 1080 }}>
+              <h1 className="dss-display" style={{ fontSize: 34, fontWeight: 800, margin: "4px 0 6px", letterSpacing: "-0.035em" }}>{projName}</h1>
+              <p style={{ fontSize: 15, color: "var(--ink-muted)", margin: "0 0 24px", maxWidth: 640, lineHeight: 1.6 }}>Design system — componentes React/TypeScript prontos pra produção. Escolha um componente na lateral pra ver variantes, props e código, ou copie o import abaixo.</p>
+
+              {/* Como usar */}
+              <div style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", padding: 22, marginBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }}>Como usar</div>
+                  <span className="dss-mono" style={{ fontSize: 11, color: "var(--ink-subtle)", border: "1px solid var(--hairline)", borderRadius: 999, padding: "6px 12px" }}>{registry.length} componentes · {totalVariants} variantes</span>
+                </div>
+                <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+                  <div>
+                    <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>1 · Importar</div>
+                    <DSCodeBlock code={`import { ${firstName} } from "@/components/${firstName}"`} />
+                  </div>
+                  <div>
+                    <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>2 · Usar no JSX</div>
+                    <DSCodeBlock code={`<${firstName} />`} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Galeria — todos os componentes (visual do preview do builder) */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                {catNames.map(cat => cats[cat].map(c => {
+                  const shown = (c.variants || []).slice(0, 6)
+                  const extra = (c.variants || []).length - shown.length
+                  return (
+                    <div key={c.name} style={{ background: "var(--surface)", borderRadius: 18, boxShadow: "var(--shadow-md)", overflow: "hidden" }}>
+                      <button onClick={() => setSel(c.name)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "13px 18px", cursor: "pointer", width: "100%", textAlign: "left", background: "transparent", border: "none", borderBottom: "1px solid var(--hairline)", fontFamily: "var(--font-sans)" }}>
+                        <span style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-.01em", color: "var(--ink)" }}>{c.displayName}</span>
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, fontWeight: 600, color: "var(--ink-muted)", background: "var(--surface-3)", padding: "2px 8px", borderRadius: 999 }}>{(c.variants || []).length} {(c.variants || []).length === 1 ? "variação" : "variações"}</span>
+                        <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--ink-subtle)" }}>abrir →</span>
+                      </button>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 16, padding: 18 }}>
+                        {(shown.length ? shown : [{ name: "Default", props: {} }]).map((v, i) => <DSPreviewCell key={i} entry={c} v={v as any} />)}
+                      </div>
+                      {extra > 0 && <div style={{ padding: "9px 18px", fontSize: 11.5, color: "var(--ink-subtle)", fontFamily: "var(--font-mono)", borderTop: "1px solid var(--hairline)" }}>+{extra} não exibida(s) — abra o componente pra ver todas</div>}
+                    </div>
+                  )
+                }))}
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </ThemeCtx.Provider>
+  )
+}
+
 export default function Platform({ registry }: { registry: RegistryEntry[] }) {
+  if (IS_INSTANCE) return <InstanceApp registry={registry} />
 
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches) return "dark"
