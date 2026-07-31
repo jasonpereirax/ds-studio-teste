@@ -5098,6 +5098,10 @@ export default async function handler(req, res) {
 `
 function PKG_INDEX_HTML(p: PkgProject): string {
   const title = (p.name || p.repo || "Design System")
+  // Seta os globais ANTES do bundle de módulos (script clássico inline roda antes do
+  // <script type="module">). Sem isso, o platform.tsx avalia REPO_NAME/IS_INSTANCE no
+  // topo do módulo antes do App.tsx setar os globais → sempre caía no default "ds-studio".
+  const boot = "window.__REPO_OWNER__=" + JSON.stringify(p.owner || "jasonpereirax") + ";window.__REPO_NAME__=" + JSON.stringify(p.repo || "ds-studio") + ";window.__DS_INSTANCE__=true;"
   return `<!doctype html>
 <html lang="pt-BR">
   <head>
@@ -5106,6 +5110,7 @@ function PKG_INDEX_HTML(p: PkgProject): string {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>` + title + `</title>
+    <script>` + boot + `</script>
   </head>
   <body>
     <div id="root"></div>
