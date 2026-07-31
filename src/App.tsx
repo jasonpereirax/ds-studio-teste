@@ -1,7 +1,7 @@
 // AUTO-GERADO pelo DS Studio. Não edite manualmente.
-// Todo o código de plataforma (sidebar, tabs, canvas, AI docs) fica em src/platform.tsx
+// A UI de visualização deste design system fica em src/viewer.tsx
 import { useState, useEffect, useMemo, useRef } from "react";
-import Platform from "./platform";
+import Viewer from "./viewer";
 import { Accordion } from "@/components/Accordion";
 import { Button } from "@/components/Button";
 import { CalendarCard } from "@/components/CalendarCard";
@@ -129,5 +129,5 @@ const COMPONENT_REGISTRY: RegistryEntry[] = [
 ];
 
 export default function App() {
-  return <Platform registry={COMPONENT_REGISTRY} />;
+  return <Viewer registry={COMPONENT_REGISTRY} project={{ name: "TESTE CSS", owner: "jasonpereirax", repo: "ds-studio-teste" }} />;
 }
