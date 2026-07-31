@@ -20,6 +20,7 @@ export type RegistryEntry = {
 
 (globalThis as any).__REPO_OWNER__ = "jasonpereirax";
 (globalThis as any).__REPO_NAME__  = "ds-studio-teste";
+(globalThis as any).__DS_INSTANCE__ = true;
 
 const COMPONENT_REGISTRY: RegistryEntry[] = [
   {

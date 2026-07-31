@@ -24,10 +24,11 @@ type RegistryEntry = {
 const REPO_OWNER: string = (typeof __REPO_OWNER__ !== "undefined") ? __REPO_OWNER__ : "jasonpereirax"
 // @ts-ignore
 const REPO_NAME:  string = (typeof __REPO_NAME__  !== "undefined") ? __REPO_NAME__  : "ds-studio"
-// Instância publicada (site white-label de um projeto): o App.tsx gerado injeta
-// __DS_INSTANCE__ = true. Quando true, o shell renderiza SÓ o catálogo (Storybook
-// do design system) a partir do registry estático — sem hub/login/Console.
-const IS_INSTANCE: boolean = (typeof __DS_INSTANCE__ !== "undefined") && !!(__DS_INSTANCE__ as any)
+// Instância publicada (site white-label de um projeto): renderiza SÓ o catálogo
+// (Storybook do design system) a partir do registry estático — sem hub/login/Console.
+// Detecção robusta: qualquer repo que NÃO seja o core `ds-studio` é uma instância.
+// (Não depende do App.tsx gerado injetar __DS_INSTANCE__, que pode vir de bundle velho.)
+const IS_INSTANCE: boolean = ((typeof __DS_INSTANCE__ !== "undefined") && !!(__DS_INSTANCE__ as any)) || (REPO_NAME !== "ds-studio")
 
 type DocStatus = "idle" | "loading" | "done" | "error"
 interface AllDocs { a11y: any; donts: any; useCases: any; interpretation: any }
@@ -867,6 +868,33 @@ function OverviewPage({ registry, onOpen, onFoundations, onExport, q, setQ, toke
     <div className="dss-fade dss-scroll" style={{ padding: "26px 30px 60px" }}>
       {/* top bar */}
       <TopBar title="Overview" actions={onPublish ? <DarkPill onClick={onPublish}><Icon d={ICONS.github || "M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"} size={15} />Publicar no GitHub</DarkPill> : undefined} />
+
+      {/* Como usar — só na instância publicada (site white-label do design system) */}
+      {IS_INSTANCE && (
+        <div style={{ ...cardBox, padding: 24, marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
+            <div style={{ fontSize: 19, fontWeight: 700, letterSpacing: "-0.02em" }}>Como usar</div>
+            <span className="dss-mono" style={{ fontSize: 11, color: "var(--ink-subtle)", border: "1px solid var(--hairline)", borderRadius: 999, padding: "6px 12px" }}>{registry.length} componentes · {totalVariants} variantes</span>
+          </div>
+          <div style={{ fontSize: 14, color: "var(--ink-muted)", lineHeight: 1.6, marginBottom: 18, maxWidth: 660 }}>
+            Design system de <b style={{ color: "var(--ink)" }}>{project}</b> — componentes React/TypeScript prontos pra produção. Importe do diretório de componentes e componha na sua aplicação. Abra qualquer componente pra ver variantes, props, tokens e o código-fonte.
+          </div>
+          <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+            <div>
+              <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>1 · Importar</div>
+              <pre className="dss-mono" style={{ margin: 0, background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 12, padding: "12px 14px", fontSize: 12.5, color: "var(--ink)", overflowX: "auto", lineHeight: 1.5 }}>{`import { ${registry[0]?.name || "Button"} } from "@/components/${registry[0]?.name || "Button"}"`}</pre>
+            </div>
+            <div>
+              <div className="dss-mono" style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--ink-subtle)", marginBottom: 6 }}>2 · Usar no JSX</div>
+              <pre className="dss-mono" style={{ margin: 0, background: "var(--surface-2)", border: "1px solid var(--hairline)", borderRadius: 12, padding: "12px 14px", fontSize: 12.5, color: "var(--ink)", overflowX: "auto", lineHeight: 1.5 }}>{`<${registry[0]?.name || "Button"} />`}</pre>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
+            <button className="dss-btn" onClick={onFoundations} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: "var(--ink-muted)", background: "transparent", border: "1px solid var(--hairline-strong)", borderRadius: 999, padding: "8px 15px", cursor: "pointer", fontFamily: "var(--font-sans)" }}><Icon d={ICONS.layers} size={14} />Tokens & Foundations</button>
+            <button className="dss-btn" onClick={onExport} style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: "var(--ink-muted)", background: "transparent", border: "1px solid var(--hairline-strong)", borderRadius: 999, padding: "8px 15px", cursor: "pointer", fontFamily: "var(--font-sans)" }}><Icon d={ICONS.download} size={14} />DESIGN.md pra agentes</button>
+          </div>
+        </div>
+      )}
 
       {/* row 1: Sistema (1fr) + Variantes por componente (360px) */}
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 360px", gap: 20 }}>
