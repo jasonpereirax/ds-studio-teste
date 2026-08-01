@@ -14,7 +14,7 @@ type RegistryEntry = {
   tokens?: TokenEntry[]; source?: string; publishedAt?: string
   Component: React.ComponentType<Record<string, unknown>>
 }
-type Project = { name?: string; owner?: string; repo?: string }
+type Project = { name?: string; owner?: string; repo?: string; accent?: string }
 type Theme = "light" | "dark"
 const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: "light", toggle: () => {} })
 
@@ -66,6 +66,29 @@ function FontLoader() {
     link.href = "https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     document.head.append(pre1, pre2, link)
   }, [])
+  return null
+}
+
+// White-label: o acento do PROJETO substitui o verde da ferramenta (só a família accent;
+// o primário/CTA continua ink, e os semânticos ok/warn/err ficam iguais). Um único hex.
+function readableOn(color: string): string {
+  const m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec((color || "").trim())
+  if (!m) return "#ffffff"
+  let h = m[1]; if (h.length === 3) h = h.split("").map(c => c + c).join("")
+  const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16)
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.62 ? "#111114" : "#ffffff"
+}
+function AccentOverride({ accent }: { accent?: string }) {
+  useEffect(() => {
+    const id = "dss-accent-override"
+    const prev = document.getElementById(id); if (prev) prev.remove()
+    const a = (accent || "").trim()
+    if (!a) return
+    const on = readableOn(a)
+    const css = `:root,[data-theme="dark"]{--accent:${a};--accent-ink:color-mix(in srgb, ${a} 78%, #000);--accent-soft:color-mix(in srgb, ${a} 14%, transparent);--on-accent:${on};}`
+    const el = document.createElement("style"); el.id = id; el.textContent = css; document.head.appendChild(el)
+    return () => { const e = document.getElementById(id); if (e) e.remove() }
+  }, [accent])
   return null
 }
 
@@ -316,7 +339,7 @@ export default function Viewer({ registry, project = {} }: { registry: RegistryE
 
   const navItem = (icon: string, label: string, on: boolean, onClick: () => void) => (
     <button onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left", background: on ? "var(--surface)" : "transparent", boxShadow: on ? "var(--shadow-sm)" : "none", border: "none", borderRadius: 10, padding: "9px 14px", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13.5, fontWeight: on ? 600 : 500, color: on ? "var(--ink)" : "var(--ink-muted)" }}>
-      <Icon d={icon} size={16} />{label}
+      <span style={{ display: "inline-flex", color: on ? "var(--accent-ink)" : "inherit" }}><Icon d={icon} size={16} /></span>{label}
     </button>
   )
 
@@ -325,12 +348,11 @@ export default function Viewer({ registry, project = {} }: { registry: RegistryE
       <div data-theme={theme === "dark" ? "dark" : undefined}>
         <style>{THEME_CSS}</style>
         <FontLoader />
+        <AccentOverride accent={project.accent} />
         <div className="dss-root" style={{ display: "flex", minHeight: "100vh", background: "var(--canvas)", fontFamily: "var(--font-sans)", color: "var(--ink)" }}>
           <aside style={{ width: 280, flexShrink: 0, background: "var(--canvas)", borderRight: "1px solid var(--hairline)", position: "sticky", top: 0, height: "100vh", display: "flex", flexDirection: "column" }}>
             <button onClick={() => setView("intro")} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", padding: "20px 22px 14px", textAlign: "left" }}>
-              <span style={{ width: 30, height: 30, borderRadius: 9, background: "linear-gradient(145deg,#6f6f72,#2b2b2e)", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "var(--shadow-sm)" }}>
-                <span style={{ width: 13, height: 13, background: "#fff", clipPath: "polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%)" }} />
-              </span>
+              <span style={{ width: 30, height: 30, borderRadius: 9, background: "var(--accent)", color: "var(--on-accent)", display: "inline-flex", alignItems: "center", justifyContent: "center", boxShadow: "var(--shadow-sm)", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15 }}>{(name || "D").trim().charAt(0).toUpperCase()}</span>
               <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
                 <span style={{ fontSize: 14, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ink)" }}>{name}</span>
                 <span className="dss-mono" style={{ fontSize: 9.5, color: "var(--ink-subtle)", letterSpacing: ".04em" }}>DESIGN SYSTEM</span>
@@ -362,7 +384,10 @@ export default function Viewer({ registry, project = {} }: { registry: RegistryE
                     const on = view === "component" && sel === c.name
                     return (
                       <button key={c.name} onClick={() => openComp(c.name)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", textAlign: "left", background: on ? "var(--surface)" : "transparent", boxShadow: on ? "var(--shadow-sm)" : "none", border: "none", borderRadius: 9, padding: "7px 14px", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: on ? 600 : 500, color: on ? "var(--ink)" : "var(--ink-muted)" }}>
-                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.displayName}</span>
+                        <span style={{ display: "flex", alignItems: "center", gap: 8, overflow: "hidden", minWidth: 0 }}>
+                          <span style={{ width: 5, height: 5, borderRadius: 999, background: on ? "var(--accent)" : "transparent", flexShrink: 0 }} />
+                          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.displayName}</span>
+                        </span>
                         <span className="dss-mono" style={{ fontSize: 10, color: "var(--ink-subtle)", flexShrink: 0, marginLeft: 8 }}>{(c.variants || []).length}</span>
                       </button>
                     )

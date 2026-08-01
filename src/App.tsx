@@ -129,5 +129,5 @@ const COMPONENT_REGISTRY: RegistryEntry[] = [
 ];
 
 export default function App() {
-  return <Viewer registry={COMPONENT_REGISTRY} project={{ name: "TESTE CSS", owner: "jasonpereirax", repo: "ds-studio-teste" }} />;
+  return <Viewer registry={COMPONENT_REGISTRY} project={{ name: "TESTE CSS", owner: "jasonpereirax", repo: "ds-studio-teste", accent: "#1FA463" }} />;
 }
